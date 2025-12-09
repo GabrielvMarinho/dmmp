@@ -74,7 +74,7 @@ location: {object.get("origin")}
 
 relationships: {
    ", ".join([
-      f"[[{rel.get("name")}]]" if rel else "" 
+      f"[[{rel.get("folder")+"/"+rel.get("name")+"|"+rel.get("name")}]]" if rel else "" 
       for rel in [
          self.temp_mapping.get(rel.strip()) for rel in object.get("relationships")
          ]
