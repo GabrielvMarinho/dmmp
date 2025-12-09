@@ -60,7 +60,7 @@ class Mapper():
             }
 
    def write_map(self):
-      for _, object in self.temp_mapping.items():
+      for id, object in self.temp_mapping.items():
          path = self.save_path+"/"+object.get("folder")
          os.makedirs(path, exist_ok=True)
          id_to_change = re.findall(r"\[\[(.*?)\]\]", object.get("desc"))
@@ -70,7 +70,7 @@ class Mapper():
             desc = desc.replace(id, self.get_link(id))
 
          with open(f"{path}/{object.get("name")}.md", "w", encoding="utf-8") as f1:
-            f1.write(f"{desc}\n\n{object.get("origin")}")
+            f1.write(f"{desc}\n\nid: {id}\norigin: {object.get("origin")}")
 
    def get_link(self, id):
       obj = self.temp_mapping.get(id.strip())
