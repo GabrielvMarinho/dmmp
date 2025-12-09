@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import argparse
+from tqdm import tqdm
 
 parser = argparse.ArgumentParser(
    prog="dmm",
@@ -15,6 +16,8 @@ args = parser.parse_args()
 
 
 map = os.getenv("PATH_TO_SAVE_MAP")
+
+progress_bar = tqdm(total=100)
 
 folders_to_ignore = {item for item in os.getenv("FOLDERS_TO_IGNORE").split(",")}
 sum_ = {}
@@ -52,7 +55,9 @@ def read_dir(dir_, max_rec, current_rec=0, load_bar=False, load_bar_start=0, loa
          percentage = index/len(folders)
          diff = load_bar_end-load_bar_start
          relative_percentage = (percentage*diff)+load_bar_start
-         print(f"----- {relative_percentage:.2f}% -> {folder}")
+         progress_bar.n = float(f"{relative_percentage:.2f}")
+         progress_bar.refresh()
+         progress_bar.set_postfix(task=folder)
          if folder not in folders_to_ignore:      
             read_dir(fr"{dir_}\{folder}", max_rec=max_rec, current_rec=current_rec+1)
             sum_[folder] = (sum_.get(folder) or 0) + 1
@@ -86,9 +91,6 @@ relationships: {
  
           
 if __name__ == "__main__":
-   
-   print(args.dir_to_map)
-   print(args.folders_ignore)
 
    for index, array in enumerate(args.dir_to_map):
       path = array[0]
@@ -96,6 +98,4 @@ if __name__ == "__main__":
       load_bar_start = index/len(args.dir_to_map)*100
       load_bar_end = (index+1)/len(args.dir_to_map)*100
       read_dir(path, nested_folders, load_bar=True, load_bar_start=load_bar_start, load_bar_end=load_bar_end)
-   print("----- 100% -----")
-   print(structure)
    write_map()
