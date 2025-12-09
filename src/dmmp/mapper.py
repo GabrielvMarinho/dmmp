@@ -1,5 +1,6 @@
 import os
 from tqdm import tqdm
+import re
 
 class Mapper():
    def __init__(self, save_path: str, folders_to_ignore: list[str], metadata_file_name: str="desc"):
@@ -48,16 +49,13 @@ class Mapper():
    def get_desc_data(self, directory: str):
       with open(directory, "r", encoding="utf-8") as f:
             id = f.readline().strip()
+            folder_path = f.readline().strip()
             name = f.readline().strip()
             desc = f.readline().strip()
-            type_ = f.readline().strip()
-            relationships = f.readline().split(",")
             self.temp_mapping[id] = {            
                "name":name,
                "desc":desc,
-               "folder":type_,
-               "type":type_,
-               "relationships":relationships,
+               "folder":folder_path,
                "origin":"/".join(directory.split("\\")[:-1])
             }
 
@@ -65,19 +63,15 @@ class Mapper():
       for _, object in self.temp_mapping.items():
          path = self.save_path+"/"+object.get("folder")
          os.makedirs(path, exist_ok=True)
+         id_to_change = re.findall(r"\[\[(.*?)\]\]", object.get("desc"))
+         desc = object.get("desc")
+
+         for id in id_to_change:
+            desc = desc.replace(id, self.get_link(id))
+
          with open(f"{path}/{object.get("name")}.md", "w", encoding="utf-8") as f1:
-            f1.write(f"""
-{object.get("desc")}
+            f1.write(f"{desc}\n\n{object.get("origin")}")
 
-type: {object.get("type")}
-location: {object.get("origin")}
-
-relationships: {
-   ", ".join([
-      f"[[{rel.get("folder")+"/"+rel.get("name")+"|"+rel.get("name")}]]" if rel else "" 
-      for rel in [
-         self.temp_mapping.get(rel.strip()) for rel in object.get("relationships")
-         ]
-   ])
-      }
-      """)
+   def get_link(self, id):
+      obj = self.temp_mapping.get(id.strip())
+      return f"{obj.get("folder")}/{obj.get("name")}|{obj.get("name")}"
