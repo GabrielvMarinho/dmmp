@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 import argparse
-from mapper import Mapper
+from .mapper import Mapper
 
 load_dotenv()
 
