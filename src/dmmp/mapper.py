@@ -1,15 +1,23 @@
 import os
 from tqdm import tqdm
 import re
+from .exceptions import NotEmptyDir
+
 
 class Mapper():
-   def __init__(self, save_path: str, folders_to_ignore: list[str], metadata_file_name: str="desc"):
+   def __init__(self, save_path: str, dir_output_name: str, folders_to_ignore: list[str], metadata_file_name: str="desc"):
+      path = os.path.join(save_path, dir_output_name)
+      if os.path.exists(path):
+         raise NotEmptyDir(path) 
+         
       self.folders_to_ignore = {item for item in folders_to_ignore}
       self.save_path = save_path
       self.progress_bar = tqdm(total=100)
       self.folders_sum = 0
       self.metadata_file_name = metadata_file_name
       self.temp_mapping = {}
+      self.dir_output_name = dir_output_name
+      
    
    def __call__(self, dir_to_map: str):
       for index, array in enumerate(dir_to_map):
@@ -60,9 +68,10 @@ class Mapper():
             }
 
    def write_map(self):
+      path = self.save_path+"/"+self.dir_output_name
       for id, object in self.temp_mapping.items():
-         path = self.save_path+"/"+object.get("folder")
-         os.makedirs(path, exist_ok=True)
+         temp_path = path+"/"+object.get("folder")
+         os.makedirs(temp_path, exist_ok=True)
          id_to_change = re.findall(r"\[\[(.*?)\]\]", object.get("desc"))
          desc = object.get("desc")
 
