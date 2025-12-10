@@ -20,4 +20,4 @@ C:\Path1 -> path of input.
 C:\Path2 -> path of output.  
 name -> name on which the metadata files will be on, without extension.
 
-Now on the output path, you should see a tree of folders that represent the data you provided as input.
+Now on the output path, you should see a folder that represents the data you provided as input.
