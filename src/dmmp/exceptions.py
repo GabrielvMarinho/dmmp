@@ -1,3 +1,3 @@
-class NotEmptyDir(Exception):
+class DirectoryAlreadyExists(Exception):
    def __init__(self, path):
-      super().__init__(f"Output directory ({path}) not empty, cannot overwrite it")
+      super().__init__(f"Output directory ({path}) already exists, cannot overwrite it")

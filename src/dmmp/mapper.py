@@ -1,20 +1,20 @@
 import os
 from tqdm import tqdm
 import re
-from .exceptions import NotEmptyDir
+from .exceptions import DirectoryAlreadyExists
 
 
 class Mapper():
-   def __init__(self, save_path: str, dir_output_name: str, folders_to_ignore: list[str], metadata_file_name: str="desc"):
+   def __init__(self, save_path: str, dir_output_name: str, folders_to_ignore: list[str], metadata_file_names: list[str]):
       path = os.path.join(save_path, dir_output_name)
       if os.path.exists(path):
-         raise NotEmptyDir(path) 
+         raise DirectoryAlreadyExists(path) 
          
       self.folders_to_ignore = {item for item in folders_to_ignore}
       self.save_path = save_path
       self.progress_bar = tqdm(total=100)
       self.folders_sum = 0
-      self.metadata_file_name = metadata_file_name
+      self.metadata_file_names = {item for item in metadata_file_names}
       self.temp_mapping = {}
       self.dir_output_name = dir_output_name
       
@@ -38,7 +38,7 @@ class Mapper():
          self.progress_bar.close()
 
    def read_dir(self, directory: str, max_rec: int, current_rec: int=0, load_bar: bool=False, load_bar_start: int=0, load_bar_end: int=100):
-      if directory.endswith(f"{self.metadata_file_name}.dmmp"):
+      if ("*" in self.metadata_file_names and directory.endswith(".dmmp")) or any(directory.endswith(f"{item}.dmmp") for item in self.metadata_file_names):
          self.get_desc_data(directory)
       if current_rec>max_rec or not os.path.isdir(directory):
          return
@@ -78,9 +78,13 @@ class Mapper():
          for id in id_to_change:
             desc = desc.replace(id, self.get_link(id))
 
-         with open(f"{path}/{object.get("name")}.md", "w", encoding="utf-8") as f1:
+         with open(f"{temp_path}/{object.get("name")}.md", "w", encoding="utf-8") as f1:
             f1.write(f"{desc}\n\nid: {id}\norigin: {object.get("origin")}")
 
    def get_link(self, id):
       obj = self.temp_mapping.get(id.strip())
-      return f"{obj.get("folder")}/{obj.get("name")}|{obj.get("name")}"
+      if obj:
+         return f"{obj.get("folder")}/{obj.get("name")}|{obj.get("name")}"
+      else:
+         return f"{id}"
+         

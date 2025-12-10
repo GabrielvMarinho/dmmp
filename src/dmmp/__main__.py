@@ -11,11 +11,11 @@ parser.add_argument('-d', '--dir-to-map', required=True, help="Directory to scan
 parser.add_argument('-i', '--folders-ignore', required=False, help="List of folders to ignore", nargs="+")
 parser.add_argument('-s', '--save-path', required=True, help="Path to save output")
 parser.add_argument('-n', '--name-output', default="dmmp-output", required=False, help="Name of the output directory")
-parser.add_argument('-m', '--metadata-file-name', required=True, help="File name containing the directory metadata (no extension)")
+parser.add_argument('-m', '--metadata-file-names', required=False, default=["desc"], nargs="+", help="File names containing the directory metadata (no extension)")
 
 args = parser.parse_args()
 
 if __name__ == "__main__":
-   mapper = Mapper(args.save_path, args.name_output, args.folders_ignore, args.metadata_file_name)
+   mapper = Mapper(args.save_path, args.name_output, args.folders_ignore, args.metadata_file_names)
    mapper(args.dir_to_map)
      
