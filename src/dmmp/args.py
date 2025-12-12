@@ -6,10 +6,8 @@ from .exceptions import MissingArgumentException
 
 def _get_toml_args(path: str):
    try:
-      print(path)
       with open(path, "rb") as f:
          data = tomllib.load(f)
-         print(data)
          return data
       
    except Exception as e:
@@ -51,6 +49,5 @@ def validate_args(args: dict, required_args: list[str]):
 
 def write_args_to_toml(args: dict, config_file_name: str):
    with open(os.path.join(os.getcwd(), config_file_name), "wb") as f:
-      print(args)
       tomli_w.dump(args, f)
  
