@@ -19,12 +19,12 @@ class Mapper():
       self.dir_output_name = dir_output_name
       
    
-   def __call__(self, dir_to_map: str):
-      for index, array in enumerate(dir_to_map):
+   def __call__(self, dirs_to_map: str):
+      for index, array in enumerate(dirs_to_map):
          path = array[0]
          nested_folders = int(array[1])
-         load_bar_start = index/len(dir_to_map)*100
-         load_bar_end = (index+1)/len(dir_to_map)*100
+         load_bar_start = index/len(dirs_to_map)*100
+         load_bar_end = (index+1)/len(dirs_to_map)*100
          self.read_dir(path, nested_folders, load_bar=True, load_bar_start=load_bar_start, load_bar_end=load_bar_end)
       self.write_map()
       self.update_progress_bar(percentage=100, post_fix="Finished", close=True)
@@ -68,9 +68,10 @@ class Mapper():
             }
 
    def write_map(self):
-      path = self.save_path+"/"+self.dir_output_name
+
+      path = os.path.join(self.save_path, self.dir_output_name)
       for id, object in self.temp_mapping.items():
-         temp_path = path+"/"+object.get("folder")
+         temp_path = os.path.join(path, object.get("folder"))
          os.makedirs(temp_path, exist_ok=True)
          id_to_change = re.findall(r"\[\[(.*?)\]\]", object.get("desc"))
          desc = object.get("desc")
@@ -78,7 +79,7 @@ class Mapper():
          for id in id_to_change:
             desc = desc.replace(id, self.get_link(id))
 
-         with open(f"{temp_path}/{object.get("name")}.md", "w", encoding="utf-8") as f1:
+         with open(os.path.join(temp_path, f"{object.get("name")}.md"), "w", encoding="utf-8") as f1:
             f1.write(f"{desc}\n\nid: {id}\norigin: {object.get("origin")}")
 
    def get_link(self, id):
