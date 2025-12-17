@@ -55,7 +55,7 @@ def get_args(
 
    # It's ok to be null, toml shouldnt be considered if not specified
    toml_dict = _get_toml_args(config_file)
-
+   
    cli_dict = {
       k:v for k, v in {
       "config_file":config_file,
@@ -76,7 +76,6 @@ def get_args(
    merged_dict["folders_ignore"] = merged_dict.get("folders_ignore", [])
    merged_dict["save_path"] = merged_dict.get("save_path", os.getcwd())
    merged_dict["config_file"] = merged_dict.get("config_file", "config.toml")
-
    merged_dict["name_output"] = merged_dict.get("name_output", "dmmp-output") 
    merged_dict["metadata_file_names"] = \
       merged_dict.get("metadata_file_names", ["*"]) 
@@ -94,6 +93,8 @@ def write_args_to_toml(args: dict, config_file_name: str):
    temp_args = args.copy()
    if temp_args.get("save_path") == os.getcwd():
       del temp_args["save_path"]
+   
+   del temp_args["config_file"]
+   
    with open(os.path.join(os.getcwd(), config_file_name), "wb") as f:
-      tomli_w.dump(args, f)
- 
+      tomli_w.dump(temp_args, f)
