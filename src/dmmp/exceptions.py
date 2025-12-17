@@ -5,4 +5,4 @@ class DirectoryAlreadyExists(Exception):
 
 class MissingArgumentException(Exception):
    def __init__(self, arg):
-      super().__init__(f"Missing argument ({arg})")
+      super().__init__(f"Missing argument (--{arg.replace("_", "-")})")

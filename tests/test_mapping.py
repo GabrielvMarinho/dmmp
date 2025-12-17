@@ -76,7 +76,3 @@ def test_write_map_and_assert_dir_exists():
    
    shutil.rmtree(os.path.join(mapper1_path, "temp"))
    mapper1._assert_directory_exists(mapper1_path, "temp")
-
-def test_read_dir():
-   
-   pass

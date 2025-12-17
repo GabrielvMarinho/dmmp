@@ -61,7 +61,7 @@ class Mapper():
 
       if ("*" in self._metadata_file_names and directory.endswith(".dmmp")) or any(directory.endswith(f"{item}.dmmp") for item in self._metadata_file_names):
          self._get_desc_data(directory)
-      if current_rec>max_rec or not os.path.isdir(directory):
+      if current_rec>=max_rec or not os.path.isdir(directory):
          return
       folders = os.listdir(directory)
       
