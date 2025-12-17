@@ -11,7 +11,7 @@ class Mapper():
       dir_output_name: str, 
       folders_to_ignore: list[str], 
       metadata_file_names: list[str]
-   ):
+      ):
       self._assert_directory_exists(save_path, dir_output_name)
       self._folders_to_ignore = {item for item in folders_to_ignore}
       self._save_path = save_path
@@ -27,7 +27,12 @@ class Mapper():
       self, 
       save_path: str, 
       dir_output_name: str
-   ):
+      ):
+      """Tests if given directory exists.
+
+      :param save_path: path to save.
+      :param dir_output_name: name of output to save. 
+      """
       path = os.path.join(save_path, dir_output_name)
       if os.path.exists(path):
          raise DirectoryAlreadyExists(path) 
@@ -36,7 +41,15 @@ class Mapper():
    def __call__(
       self,
       dirs_to_map: str
-   ):
+      ):
+      """Scan, store and output a directory.
+
+      Scan all directories necessary, saving important data on the
+      object's state, lastly, it prints some data about the operation
+      and saves the output.
+      
+      :param dirs_to_map: directories to map.
+      """
       for index, array in enumerate(dirs_to_map):
          path = array[0]
          nested_folders = int(array[1])
@@ -47,10 +60,11 @@ class Mapper():
       self._update_progress_bar(percentage=100, post_fix="Finished", close=True)
     
       print(f"{self._folders_sum} items were scanned.")
-      print(f"output saved on path:  {
-         os.path.join(self._save_path, 
-         self._dir_output_name)
-         }")
+      output_path = os.path.join(self._save_path, self._dir_output_name)
+      if os.path.exists(output_path):
+         print(f"Output saved on path: {output_path}")
+      else:
+         print(f"No content to save.")
 
 
    def _update_progress_bar(
@@ -58,7 +72,13 @@ class Mapper():
       percentage: float, 
       post_fix: str, 
       close: bool=False
-   ):
+      ):
+      """Updates progress bar state.
+
+      :param percentage: percentage the process is in.
+      :param post_fix: hint to what item is being currently processed. 
+      :param close: represents if the progress bar needs to be closed.
+      """
       val = float(f"{percentage:.2f}")
       self._progress_bar.n = val
       self._progress_bar_percentage = val
@@ -77,7 +97,7 @@ class Mapper():
       load_bar: bool=False, 
       load_bar_start: int=0, 
       load_bar_end: int=100
-   ):
+      ):
       """Recursively reads folders and update objects state.
 
       Recursively calls itself, entering all the necessary sub folders. 
@@ -116,7 +136,10 @@ class Mapper():
                post_fix=folder)
 
 
-   def _get_desc_data(self, directory: str):
+   def _get_desc_data(
+      self,
+      directory: str
+      ):
       """Get data from a directory and store its data.
 
       Find the file, open it, read line by line and store in the
@@ -164,7 +187,17 @@ class Mapper():
             f1.write(f"{desc}\n\nid: {id}\norigin: {object.get("origin")}")
 
 
-   def _get_link(self, id):
+   def _get_link(
+      self, 
+      id
+      ):
+      """Get markdown friendly from an id.
+
+      Finds the output path of the item and use it to build a mardown 
+      friendly link that can redirect to that path when clicked.
+
+      :param id: id of the item.
+      """
       obj = self._temp_mapping.get(id.strip())
       if obj:
          return f"{obj.get("folder")}/{obj.get("name")}|{obj.get("name")}"
