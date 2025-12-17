@@ -7,7 +7,8 @@ from .exceptions import MissingArgumentException
 def _get_toml_args(path: str):
    """Get the arguments in a .toml file
    
-   :param path: The path of the .toml file
+   :param path: 
+      The path of the .toml file
    """
    try:
       with open(path, "rb") as f:
@@ -27,11 +28,11 @@ def get_args(
       name_output: str = None,
       metadata_file_names: str = None
       ):
-   """Merge the arguments passed by the CLI and the configuration file
+   """Merge the arguments passed by the CLI and the configuration file.
 
    Scan the configuration .toml file and the arguments passed in the
    CLI, creates a new dict and returns it, with the CLI arguments being
-   the priority
+   the priority.
 
    :param config_file:
       .toml file to get configuration from.

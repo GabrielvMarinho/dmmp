@@ -6,10 +6,9 @@ from .exceptions import DirectoryAlreadyExists
 
 class Mapper():
    def __init__(self, save_path: str, dir_output_name: str, folders_to_ignore: list[str], metadata_file_names: list[str]):
-      path = os.path.join(save_path, dir_output_name)
-      if os.path.exists(path):
-         raise DirectoryAlreadyExists(path) 
-         
+      
+      self._assert_directory_exists(save_path, dir_output_name)
+
       self._folders_to_ignore = {item for item in folders_to_ignore}
       self._save_path = save_path
       self._progress_bar = tqdm(total=100)
@@ -19,6 +18,11 @@ class Mapper():
       self._dir_output_name = dir_output_name
       self._progress_bar_percentage = 0
    
+   def _assert_directory_exists(self, save_path: str, dir_output_name: str):
+      path = os.path.join(save_path, dir_output_name)
+      if os.path.exists(path):
+         raise DirectoryAlreadyExists(path) 
+         
    def __call__(self, dirs_to_map: str):
       for index, array in enumerate(dirs_to_map):
          path = array[0]
@@ -41,6 +45,20 @@ class Mapper():
          self._progress_bar.close()
 
    def _read_dir(self, directory: str, max_rec: int, current_rec: int=0, load_bar: bool=False, load_bar_start: int=0, load_bar_end: int=100):
+      """Recursively reads folders and update objects state.
+
+      Recursively calls itself, entering all the necessary sub folders. 
+      Check for files with specific names and reads them, updating the 
+      mapping of content and the progress bar.
+
+      :param directory: directory to scan.
+      :param max_rec: max subfolders to scan.
+      :param current_rec: current subfolder count.
+      :param load_bar: if the load bar will be updated.
+      :param load_bar_start: the start of the load bar percentage.
+      :param load_bar_end: the end of the load bar percentage.
+      """
+
       if ("*" in self._metadata_file_names and directory.endswith(".dmmp")) or any(directory.endswith(f"{item}.dmmp") for item in self._metadata_file_names):
          self._get_desc_data(directory)
       if current_rec>max_rec or not os.path.isdir(directory):
@@ -58,6 +76,13 @@ class Mapper():
             self._update_progress_bar(percentage=relative_percentage, post_fix=folder)
 
    def _get_desc_data(self, directory: str):
+      """Get data from a directory and store its data.
+
+      Find the file, open it, read line by line and store in the
+      internal mapping.
+
+      :param directory: file path to read.
+      """
       with open(directory, "r", encoding="utf-8") as f:
             id = f.readline().strip()
             folder_path = f.readline().strip()
@@ -71,7 +96,15 @@ class Mapper():
             }
 
    def _write_map(self):
+      """Write the mapping to a directory.
+
+      Get all the data saved on the internal mapping and write it to a 
+      tree of separate files in a specific directory.
+      """
+      self._assert_directory_exists(self._save_path, self._dir_output_name)
+
       path = os.path.join(self._save_path, self._dir_output_name)
+      
       for id, object in self._temp_mapping.items():
          temp_path = os.path.join(path, object.get("folder"))
          os.makedirs(temp_path, exist_ok=True)
