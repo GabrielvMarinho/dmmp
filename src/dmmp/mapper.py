@@ -136,6 +136,32 @@ class Mapper():
                post_fix=folder)
 
 
+   def read_triple_string(self, file):
+      """Read the triple string of a file
+      
+      :param file: the file object
+      """
+      inside = False
+      buffer = []
+
+      for line in file:
+         if not inside:
+               if '"""' in line:
+                  inside = True
+                  after = line.split('"""', 1)[1]
+                  if after.strip():
+                     buffer.append(after)
+         else:
+               if '"""' in line:
+                  before = line.split('"""', 1)[0]
+                  if before.strip():
+                     buffer.append(before)
+                  break
+               buffer.append(line)
+
+      return "".join(buffer)
+   
+
    def _get_desc_data(
       self,
       directory: str
@@ -151,13 +177,18 @@ class Mapper():
             id = f.readline().strip()
             folder_path = f.readline().strip()
             name = f.readline().strip()
-            desc = f.readline().strip()
+            triple_string = self.read_triple_string(f)
+            print(triple_string)
+            
+            desc = triple_string
+            
             self._temp_mapping[id] = {            
                "name":name,
                "desc":desc,
                "folder":folder_path,
                "origin":"/".join(directory.split("\\"))
             }
+            print(self._temp_mapping[id])
 
 
    def _write_map(self):
@@ -166,6 +197,7 @@ class Mapper():
       Get all the data saved on the internal mapping and write it to a 
       tree of separate files in a specific directory.
       """
+      print(self._temp_mapping)
       self._assert_directory_exists(self._save_path, self._dir_output_name)
 
       path = os.path.join(self._save_path, self._dir_output_name)

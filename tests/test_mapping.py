@@ -36,7 +36,7 @@ def test_get_desc_data():
          {
             "123":{
                "name":"data",
-               "desc":"data",
+               "desc":"data\ntest\n\n\ntest\n",
                "folder":"data/",
                "origin":"tests/test_content/desc.dmmp"
             }

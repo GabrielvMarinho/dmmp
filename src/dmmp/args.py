@@ -81,7 +81,7 @@ def validate_args(
    Compare if all args in a dict are present in required args.
    
    :param args: arguments.
-   :param required_args: arguments that should be present in argument 
+   :param args: arguments that should be present in argument 
    keys.
    """
    for arg in required_args:

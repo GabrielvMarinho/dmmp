@@ -6,10 +6,20 @@ Mapper that generates a group of .md files that represent a specific directory i
 unique_id
 output_folder_path/
 output_file_name
+"""
 output_file_description
+"""
 ```
 
-Populate a specific directory and its subdirectories in this fashion before building the output (in .dmmp files).
+The output_file_name lets you link files, the syntax is:
+
+```
+"""
+this file is linked to [[other_unique_id]]
+"""
+```
+
+Populate a specific directory and its subdirectories in this fashion (in .dmmp files).
 
 After doing so, run something like the following:
 ```
