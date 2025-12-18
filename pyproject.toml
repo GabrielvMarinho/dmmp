@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dmmp"
-version = "0.1"
+version = "0.2.0"
 authors = [
   { name="Gabriel Volles Marinho", email="gabrielvmarinho1711@gmail.com" },
 ]
