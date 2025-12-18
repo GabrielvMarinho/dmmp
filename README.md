@@ -13,11 +13,24 @@ Populate a specific directory and its subdirectories in this fashion before buil
 
 After doing so, run something like the following:
 ```
-python -m dmmp -d "C:\Path1" 1 -s "C:\Path2" -m "name"
+python -m dmmp --dirs-to-map "C:\Path1" 1 --save-path "C:\Path2" --metadata-file-names "name"
 ```
-C:\Path1 -> path of input.  
-1 -> number of nested folders to check.  
-C:\Path2 -> path of output.  
-name -> name on which the metadata files will be on, without extension.
+C:\Path1 --> path of input.  
+1 ----------> number of nested folders to check.  
+C:\Path2 --> path of output.  
+name -----> name on which the metadata files will be on, without extension.
 
 Now on the output path, you should see a folder that represents the data you provided as input.
+
+## Configuration file
+
+After you do those steps, you will see a config.toml in the path you executed the script, to not repeat yourself, you can run the same exact command with this argument:
+
+```
+python -m dmmp --config-file config.toml  
+```
+
+
+## More about the arguments
+
+If you want to make your commands more powerful, run `python -m dmmp -h` to list all possible arguments and what they do.
