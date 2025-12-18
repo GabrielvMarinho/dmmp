@@ -17,7 +17,6 @@ def _get_toml_args(
          return data
       
    except Exception as e:
-      print(e)
       return {}
 
 
@@ -103,7 +102,7 @@ def write_args_to_toml(
    if temp_args.get("save_path") == os.getcwd():
       del temp_args["save_path"]
 
-   if temp_args.get("save_path"):
+   if temp_args.get("config_file"):
       del temp_args["config_file"]
    
    with open(os.path.join(os.getcwd(), config_file_name), "wb") as f:
